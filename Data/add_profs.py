@@ -4,7 +4,7 @@ import db_utils
 
 def insert_person(val, uni_id, conn):
     """Insert or update a person in the database."""
-    title = 'professor' if "prof" in val.get('affiliation', '').lower() else 'scholar'
+    title = 'professor' if val.get('citedby', 0) > 10 else 'scholar'
     sql_statement = """
         INSERT INTO people (id, uni_id, title, name, photo) 
         VALUES (%s, %s, %s, %s, %s) 
