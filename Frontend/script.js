@@ -55,10 +55,17 @@ async function searchScholars() {
     const researchArea = document.getElementById('research-area').value;
     const professorsOnly = document.getElementById('professors-only').checked;
     const resultsDiv = document.getElementById('results');
+    const totalResultsDiv = document.getElementById('total-results') || (() => {
+        const div = document.createElement('div');
+        div.id = 'total-results';
+        resultsDiv.parentNode.insertBefore(div, resultsDiv);
+        return div;
+    })();
 
     console.log('Searching with:', { university, researchArea, professorsOnly });
 
     if (!university || !researchArea) {
+        totalResultsDiv.innerHTML = '';
         resultsDiv.innerHTML = '<p>Please select both a university and research area.</p>';
         return;
     }
@@ -72,14 +79,18 @@ async function searchScholars() {
             ? scholars.filter(scholar => scholar.title.toLowerCase().includes('professor'))
             : scholars;
 
-        resultsDiv.innerHTML = filteredScholars.map(scholar => `
-            <div class="scholar-card">
-                <img src="${scholar.photo}" alt="${scholar.name}" onerror="this.src='default-avatar.png'">
-                <h3>${scholar.name}</h3>
-                <p>Title: ${scholar.title}</p>
-            </div>
-        `).join('');
+        totalResultsDiv.innerHTML = `<p class="results-count">Total Results: ${filteredScholars.length}</p>`;
+        
+        resultsDiv.innerHTML = `
+            ${filteredScholars.map(scholar => `
+                <div class="scholar-card">
+                    <img src="${scholar.photo}" alt="${scholar.name}" onerror="this.src='default-avatar.png'">
+                    <h3>${scholar.name}</h3>
+                    <p>Title: ${scholar.title}</p>
+                </div>
+            `).join('')}`;
     } catch (error) {
+        totalResultsDiv.innerHTML = '';
         console.error('Error fetching scholars:', error);
         resultsDiv.innerHTML = '<p>Error fetching results. Please try again.</p>';
     }
