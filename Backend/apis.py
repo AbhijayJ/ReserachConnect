@@ -49,7 +49,7 @@ def get_research_areas():
     conn = get_db_connection()
     try:
         cur = conn.cursor()
-        cur.execute("SELECT DISTINCT area FROM research_areas")
+        cur.execute("SELECT DISTINCT area FROM research_areas ORDER BY area")
         areas = cur.fetchall()
         return jsonify(areas)
     finally:
